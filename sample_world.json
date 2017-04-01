@@ -1,0 +1,10 @@
+{
+  "meshes": [
+    {
+      "type": "THREE.SphereGeometry",
+      "radius": 50,
+      "segments": 16,
+      "rings": 16
+    }
+  ]
+}
