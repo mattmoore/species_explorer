@@ -6,8 +6,8 @@ var lights;
 function init() {
   container = document.querySelector('#container');
   params = {
-    width: 400,
-    height: 300,
+    width: window.innerWidth,
+    height: window.innerHeight,
     view_angle: 45,
     near: 0.1,
     far: 10000
