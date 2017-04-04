@@ -37,16 +37,6 @@ function world(params) {
   renderer.setSize(params.width, params.height);
   container.appendChild(renderer.domElement); 
 
-  function update() {
-    box.rotation.x += .01;
-    box.rotation.y += .01;
-    if (dna) {
-      dna.rotation.z += .01;
-    }
-    renderer.render(scene, camera);
-    requestAnimationFrame(update);
-  }
-
   requestAnimationFrame(update);
 
   return {
@@ -56,14 +46,25 @@ function world(params) {
   };
 }
 
+function update() {
+  box.rotation.x += .01;
+  box.rotation.y += .01;
+  if (dna) {
+    dna.rotation.z += .01;
+  }
+  renderer.render(scene, camera);
+  requestAnimationFrame(update);
+}
+
 function loadMeshes() {
   loadBox();
   loadDNA();
 }
 
 function loadBox() {
-  boxGeometry = new THREE.BoxGeometry(5, 5, 5);
-  boxMaterial = new THREE.MeshLambertMaterial({ color: 0xCCFF00 });
+  var boxGeometry = new THREE.BoxGeometry(5, 5, 5);
+  var texture = new THREE.ImageUtils.loadTexture('/textures/wood-floor.jpg');
+  var boxMaterial = new THREE.MeshPhongMaterial({ map: texture, shininess: 1000 });
   box = new THREE.Mesh(boxGeometry, boxMaterial);
   box.position.x = 3;
   box.position.z = -10;
@@ -72,7 +73,7 @@ function loadBox() {
 
 function loadDNA() {
   var loader = new THREE.JSONLoader();
-  loader.load("/models/dna/DNA.json", function(geometry, materials) {
+  loader.load('/models/dna/DNA.json', function(geometry, materials) {
     var material = new THREE.MultiMaterial(materials);
     dna = new THREE.Mesh(geometry, material);
     dna.position.x = -5;
@@ -86,7 +87,7 @@ function loadLights() {
   lights = [];
 
   pointLight = new THREE.PointLight(0xFFFFFF);
-  pointLight.position.x = 10;
+  pointLight.position.x = 30;
   pointLight.position.y = 50;
   pointLight.position.z = 130;
 
