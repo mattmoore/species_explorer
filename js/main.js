@@ -1,7 +1,8 @@
 var container;
 var world;
-var meshes;
 var lights;
+var loader;
+var dna;
 
 function init() {
   container = document.querySelector('#container');
@@ -12,9 +13,12 @@ function init() {
     near: 0.1,
     far: 10000
   }
-  meshes = loadMeshes();
   lights = loadLights();
   world = world(params);
+
+  $(window).resize(function() {
+    world.renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 }
 
 function world(params) {
@@ -24,9 +28,7 @@ function world(params) {
   scene = new THREE.Scene();
   scene.add(camera);
 
-  $.each(meshes, function(index, item) {
-    scene.add(item);
-  });
+  loadMeshes();
 
   $.each(lights, function(index, item) {
     scene.add(item);
@@ -36,6 +38,11 @@ function world(params) {
   container.appendChild(renderer.domElement); 
 
   function update() {
+    box.rotation.x += .01;
+    box.rotation.y += .01;
+    if (dna) {
+      dna.rotation.z += .01;
+    }
     renderer.render(scene, camera);
     requestAnimationFrame(update);
   }
@@ -50,18 +57,29 @@ function world(params) {
 }
 
 function loadMeshes() {
-  meshes = [];
+  loadBox();
+  loadDNA();
+}
 
-  radius = 50;
-  segments = 16;
-  rings = 16;
-  sphereGeometry = new THREE.SphereGeometry(radius, segments, rings);
-  sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xCCFF00 });
-  sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphere.position.z = -200;
+function loadBox() {
+  boxGeometry = new THREE.BoxGeometry(5, 5, 5);
+  boxMaterial = new THREE.MeshLambertMaterial({ color: 0xCCFF00 });
+  box = new THREE.Mesh(boxGeometry, boxMaterial);
+  box.position.x = 3;
+  box.position.z = -10;
+  scene.add(box);
+}
 
-  meshes.push(sphere);
-  return meshes;
+function loadDNA() {
+  var loader = new THREE.JSONLoader();
+  loader.load("/models/dna/DNA.json", function(geometry, materials) {
+    var material = new THREE.MultiMaterial(materials);
+    dna = new THREE.Mesh(geometry, material);
+    dna.position.x = -5;
+    dna.position.z = -10;
+    dna.rotation.x = -8;
+    scene.add(dna);
+  });
 }
 
 function loadLights() {
